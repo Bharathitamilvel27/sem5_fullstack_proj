@@ -6,6 +6,7 @@ import Sidebar from '../components/Sidebar';
 import RightPanel from '../components/RightPanel';
 import Search from '../components/Search';
 import './SearchPage.css';
+import { API_URL } from '../utils/api';
 
 function SearchPage() {
   const [user, setUser] = useState(null);
@@ -19,7 +20,7 @@ function SearchPage() {
       return;
     }
 
-    axios.get('http://localhost:5000/api/auth/me', {
+    axios.get(`${API_URL}/api/auth/me`, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((userRes) => {

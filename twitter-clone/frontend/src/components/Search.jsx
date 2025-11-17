@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import './Search.css';
+import { API_URL } from '../utils/api';
 
 function Search() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -21,7 +22,7 @@ function Search() {
       try {
         const token = localStorage.getItem('token');
         const response = await axios.get(
-          `http://localhost:5000/api/tweets/search?q=${encodeURIComponent(searchQuery)}&type=${searchType}`,
+          `${API_URL}/api/tweets/search?q=${encodeURIComponent(searchQuery)}&type=${searchType}`,
           {
             headers: { Authorization: `Bearer ${token}` }
           }
@@ -98,7 +99,7 @@ function Search() {
                   <div className="tweet-result-header">
                     <img
                       src={result.user.profilePicture 
-                        ? `http://localhost:5000${result.user.profilePicture}`
+                        ? `${API_URL}${result.user.profilePicture}`
                         : "https://abs.twimg.com/sticky/default_profile_images/default_profile_400x400.png"
                       }
                       alt={`@${result.user.username}`}
@@ -112,7 +113,7 @@ function Search() {
                   <div className="tweet-result-content">{result.content}</div>
                   {result.image && (
                     <img
-                      src={`http://localhost:5000${result.image}`}
+                      src={`${API_URL}${result.image}`}
                       alt="Tweet attachment"
                       className="tweet-result-image"
                     />
@@ -125,7 +126,7 @@ function Search() {
                 >
                   <img
                     src={result.profilePicture 
-                      ? `http://localhost:5000${result.profilePicture}`
+                      ? `${API_URL}${result.profilePicture}`
                       : "https://abs.twimg.com/sticky/default_profile_images/default_profile_400x400.png"
                     }
                     alt={`@${result.username}`}

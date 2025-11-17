@@ -6,6 +6,7 @@ import Header from '../components/Header';
 import Sidebar from '../components/Sidebar';
 import RightPanel from '../components/RightPanel';
 import './Profile.css';
+import { API_URL } from '../utils/api';
 
 function Profile() {
   const { username } = useParams();
@@ -39,13 +40,13 @@ function Profile() {
     const fetchData = async () => {
       try {
         const [currentUserRes, profileRes, tweetsRes] = await Promise.all([
-          axios.get('http://localhost:5000/api/auth/me', {
+          axios.get(`${API_URL}/api/auth/me`, {
             headers: { Authorization: `Bearer ${token}` }
           }),
-          axios.get(`http://localhost:5000/api/auth/profile/username/${username}`, {
+          axios.get(`${API_URL}/api/auth/profile/username/${username}`, {
             headers: { Authorization: `Bearer ${token}` }
           }),
-          axios.get(`http://localhost:5000/api/tweets/user/${username}`, {
+          axios.get(`${API_URL}/api/tweets/user/${username}`, {
             headers: { Authorization: `Bearer ${token}` }
           })
         ]);
@@ -77,7 +78,7 @@ function Profile() {
     try {
       const token = localStorage.getItem('token');
       const response = await axios.post(
-        `http://localhost:5000/api/auth/follow/${profileUser._id}`,
+        `${API_URL}/api/auth/follow/${profileUser._id}`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -103,7 +104,7 @@ function Profile() {
       
       // Update profile info
       const profileRes = await axios.put(
-        'http://localhost:5000/api/auth/profile',
+        `${API_URL}/api/auth/profile`,
         editForm,
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -114,7 +115,7 @@ function Profile() {
         formData.append('profilePicture', profileImage);
         
         const imageRes = await axios.post(
-          'http://localhost:5000/api/auth/profile/picture',
+          `${API_URL}/api/auth/profile/picture`,
           formData,
           {
             headers: {
@@ -144,7 +145,7 @@ function Profile() {
     const token = localStorage.getItem('token');
     try {
       await axios.post(
-        `http://localhost:5000/api/tweets/${tweetId}/like`,
+        `${API_URL}/api/tweets/${tweetId}/like`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -174,7 +175,7 @@ function Profile() {
     try {
       const token = localStorage.getItem('token');
       await axios.put(
-        `http://localhost:5000/api/tweets/${tweetId}`,
+        `${API_URL}/api/tweets/${tweetId}`,
         { content: editTweetContent },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -207,7 +208,7 @@ function Profile() {
     try {
       const token = localStorage.getItem('token');
       await axios.delete(
-        `http://localhost:5000/api/tweets/${tweetId}`,
+        `${API_URL}/api/tweets/${tweetId}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       
@@ -223,7 +224,7 @@ function Profile() {
       try {
         const token = localStorage.getItem('token');
         const response = await axios.get(
-          `http://localhost:5000/api/auth/profile/username/${username}/followers`,
+          `${API_URL}/api/auth/profile/username/${username}/followers`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         setFollowersList(response.data.followers);
@@ -240,7 +241,7 @@ function Profile() {
       try {
         const token = localStorage.getItem('token');
         const response = await axios.get(
-          `http://localhost:5000/api/auth/profile/username/${username}/following`,
+          `${API_URL}/api/auth/profile/username/${username}/following`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         setFollowingList(response.data.following);
@@ -275,7 +276,7 @@ function Profile() {
               <div className="profile-avatar">
                 <img
                   src={profileUser.profilePicture 
-                    ? `http://localhost:5000${profileUser.profilePicture}`
+                    ? `${API_URL}${profileUser.profilePicture}`
                     : "https://abs.twimg.com/sticky/default_profile_images/default_profile_400x400.png"
                   }
                   alt={`@${profileUser.username}`}
@@ -409,7 +410,7 @@ function Profile() {
                             <div key={follower._id} className="user-item">
                               <img
                                 src={follower.profilePicture 
-                                  ? `http://localhost:5000${follower.profilePicture}`
+                                  ? `${API_URL}${follower.profilePicture}`
                                   : "https://abs.twimg.com/sticky/default_profile_images/default_profile_400x400.png"
                                 }
                                 alt={`@${follower.username}`}
@@ -433,7 +434,7 @@ function Profile() {
                             <div key={following._id} className="user-item">
                               <img
                                 src={following.profilePicture 
-                                  ? `http://localhost:5000${following.profilePicture}`
+                                  ? `${API_URL}${following.profilePicture}`
                                   : "https://abs.twimg.com/sticky/default_profile_images/default_profile_400x400.png"
                                 }
                                 alt={`@${following.username}`}
@@ -469,7 +470,7 @@ function Profile() {
                     <div className="tweet-user">
                       <img
                         src={profileUser.profilePicture 
-                          ? `http://localhost:5000${profileUser.profilePicture}`
+                          ? `${API_URL}${profileUser.profilePicture}`
                           : "https://abs.twimg.com/sticky/default_profile_images/default_profile_400x400.png"
                         }
                         alt={`@${profileUser.username}`}
@@ -517,7 +518,7 @@ function Profile() {
 
                     {!tweet.isDeleted && tweet.image && (
                       <img
-                        src={`http://localhost:5000${tweet.image}`}
+                        src={`${API_URL}${tweet.image}`}
                         alt="Tweet attachment"
                         className="tweet-image"
                       />

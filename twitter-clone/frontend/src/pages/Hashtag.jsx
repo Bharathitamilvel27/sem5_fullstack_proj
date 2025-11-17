@@ -5,6 +5,7 @@ import { formatDistanceToNow } from 'date-fns';
 import Header from '../components/Header';
 import Sidebar from '../components/Sidebar';
 import RightPanel from '../components/RightPanel';
+import { API_URL } from '../utils/api';
 
 function Hashtag() {
   const { tag } = useParams();
@@ -22,8 +23,8 @@ function Hashtag() {
     (async () => {
       try {
         const [meRes, listRes] = await Promise.all([
-          axios.get('http://localhost:5000/api/auth/me', { headers: { Authorization: `Bearer ${token}` } }),
-          axios.get(`http://localhost:5000/api/tweets/hashtag/${encodeURIComponent(tag)}`, { headers: { Authorization: `Bearer ${token}` } }),
+          axios.get(`${API_URL}/api/auth/me`, { headers: { Authorization: `Bearer ${token}` } }),
+          axios.get(`${API_URL}/api/tweets/hashtag/${encodeURIComponent(tag)}`, { headers: { Authorization: `Bearer ${token}` } }),
         ]);
         setUser(meRes.data.user);
         setTweets(listRes.data);
@@ -64,7 +65,7 @@ function Hashtag() {
                 <div className="tweet-user">
                   <img
                     src={t.user.profilePicture 
-                      ? `http://localhost:5000${t.user.profilePicture}`
+                      ? `${API_URL}${t.user.profilePicture}`
                       : 'https://abs.twimg.com/sticky/default_profile_images/default_profile_400x400.png'}
                     alt={`@${t.user.username}`}
                     className="tweet-avatar"
@@ -88,7 +89,7 @@ function Hashtag() {
 
                 {!t.isDeleted && t.image && (
                   <img
-                    src={`http://localhost:5000${t.image}`}
+                    src={`${API_URL}${t.image}`}
                     alt="Tweet attachment"
                     className="tweet-image"
                     style={{ marginTop:'10px', maxWidth:'100%', borderRadius:'10px' }}
@@ -97,7 +98,7 @@ function Hashtag() {
                 {!t.isDeleted && t.video && (
                   <video
                     controls
-                    src={`http://localhost:5000${t.video}`}
+                    src={`${API_URL}${t.video}`}
                     className="tweet-image"
                     style={{ marginTop:'10px', maxWidth:'100%', borderRadius:'10px' }}
                   />
