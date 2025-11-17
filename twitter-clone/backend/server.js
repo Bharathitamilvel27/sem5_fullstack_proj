@@ -2,52 +2,64 @@ const express = require('express');
 const dotenv = require('dotenv');
 const cors = require('cors');
 const connectDB = require('./config/db');
-const path = require('path'); 
+const path = require('path');
+
 const uploadRoutes = require('./routes/upload');
 const adminRoutes = require('./routes/adminRoutes');
+const authRoutes = require('./routes/authRoutes');
+const tweetRoutes = require('./routes/tweetRoutes');
 
 dotenv.config();
 connectDB();
 
 const app = express();
 
+// ---------------------------
+// ✅ CORS FIX (FINAL VERSION)
+// ---------------------------
 const allowedOrigins = [
-  process.env.FRONTEND_URL,
-  process.env.VITE_FRONTEND_URL,
-  process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : undefined
-].filter(Boolean);
+  'http://localhost:5173',
+  'https://sem5-fullstack-proj-q2ju.vercel.app'  // your frontend live URL
+];
 
-app.use(cors({
-  origin: (origin, callback) => {
-    if (!origin || allowedOrigins.length === 0 || allowedOrigins.includes(origin)) {
-      return callback(null, true);
-    }
-    return callback(new Error('Not allowed by CORS'));
-  },
-  credentials: true
-}));
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+      return callback(new Error('Not allowed by CORS'));
+    },
+    credentials: true,
+  })
+);
 
 app.use(express.json());
+
+// Serve uploaded images
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// Logging middleware
+// Logging
 app.use((req, res, next) => {
   console.log(`${req.method} ${req.path}`);
   next();
 });
 
+// ---------------------------
 // Routes
-app.use('/api/auth', require('./routes/authRoutes'));
-app.use('/api/tweets', require('./routes/tweetRoutes'));
+// ---------------------------
+app.use('/api/auth', authRoutes);
+app.use('/api/tweets', tweetRoutes);
 app.use('/api/upload', uploadRoutes);
 app.use('/api/admin', adminRoutes);
 
-// Error Middleware
+// ---------------------------
+// Error handler
+// ---------------------------
 app.use((err, req, res, next) => {
-  console.error('❌ Server error:', err.stack);
+  console.error('❌ Server error:', err.message);
   res.status(500).json({ message: 'Something went wrong!' });
 });
 
-// ❗ REMOVE app.listen — Vercel will handle this automatically!
-// Export Express app for Vercel
+// ❗ Do NOT use app.listen on Vercel
 module.exports = app;
